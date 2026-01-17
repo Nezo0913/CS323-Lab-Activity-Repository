@@ -3,7 +3,7 @@ def simple_calculator():
     def apply_op(a, b, op):
         if op == '+': return a + b
         if op == '-': return a - b
-        
+        if op == '*': return a * b
         
         #divide 
         
