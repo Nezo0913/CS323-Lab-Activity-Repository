@@ -2,12 +2,11 @@ def simple_calculator():
 
     def apply_op(a, b, op):
         if op == '+': return a + b
-        #subtract
-        #multiply
+        if op == '-': return a - b
+        
+        
         #divide 
         
-
-
     def calculate(expr):
         expr = expr.replace(' ', '')
         nums, ops = [], []
