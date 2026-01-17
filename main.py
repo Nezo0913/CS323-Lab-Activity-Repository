@@ -1,3 +1,4 @@
+# Python Calculator 
 def simple_calculator():
 
     def apply_op(a, b, op):
