@@ -4,8 +4,7 @@ def simple_calculator():
         if op == '+': return a + b
         if op == '-': return a - b
         if op == '*': return a * b
-        
-        #divide 
+        if op == '/': return a / b
         
     def calculate(expr):
         expr = expr.replace(' ', '')
