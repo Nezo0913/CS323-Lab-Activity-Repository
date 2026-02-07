@@ -15,8 +15,13 @@ In the multiprocessing code, each task runs in a separate process, and each proc
 
 4. What happens if you input a large number of grades (e.g., 1000)? Which method is faster and why?
 
+If 1000 grade were input, multiprocessing would be the faster method
+It’s because multiprocessing distributes the workload across all available CPU cores, whereas multithreading would create a massive overhead of threads that are still restricted by the GIL to running one at a time.
 
 5. Which method is better for CPU-bound tasks and which for I/O-bound tasks?
 
+Multiprocessing is the superior method for CPU-bound tasks, such as complex mathematical calculations, because it enables true parallel execution across multiple cores. Conversely, multithreading is often better suited for I/O-bound tasks, such as network requests or file reading, where the program spends most of its time waiting and can switch between threads to remain efficient
 
 6. How did your group apply creative coding or algorithmic solutions in this lab?
+
+
