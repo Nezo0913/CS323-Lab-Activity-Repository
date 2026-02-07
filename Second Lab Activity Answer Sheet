@@ -2,9 +2,13 @@ QUESTIONS:
 
 1. Which approach demonstrates true parallelism in Python? Explain.
 
+In the multithreading code, Python uses something called the GIL, which only lets one thread run at a time, even if the computer is multi-cored. So the threads just take turns running, which means it’s not real parallel work, just shared time.
+In the multiprocessing code, each task runs in a separate process, and each process can use a different CPU core. Because of that, the tasks really run at the same time, showing true parallelism.
+
 
 2. Compare execution times between multithreading and multiprocessing.
 
+ Multithreading executes faster than multiprocessing for I/O-bound tasks due to lower overhead. For example, the execution time of multithreading is 47s (3 courses) with time.sleep(), but it outperforms multiprocessing if executed without it. Multiprocessing, on the other hand, significantly outperforms multithreading for CPU-bound tasks by enabling true parallel execution across multiple CPU cores.
 
 3. Can Python handle true parallelism using threads? Why or why not?
 

@@ -62,3 +62,6 @@ Multiprocessing| GWA of Course Subjects (2 subjects):  | 1.75 |  0.3545s
                | Software - 1.0
                | PICPE - 1.5
 
+RESULTS DISCUSSION: 
+
+Outputs can appear in a different order for threads and processes because they run at the same time, and the computer decides which one finishes first. Threads share memory and take turns running Python code, while processes run separately with their own memory, so the order is unpredictable. To make the code faster and easier to read, you can remove unnecessary time.sleep(), group tasks together instead of creating one thread or process per grade, and print results after everything is done.
