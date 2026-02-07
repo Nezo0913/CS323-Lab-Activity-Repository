@@ -28,4 +28,4 @@ Multiprocessing is the superior method for CPU-bound tasks, such as complex math
 
 6. How did your group apply creative coding or algorithmic solutions in this lab?
 
-
+Our group applied creative coding by using multithreading to process multiple subject grades concurrently instead of sequentially. Algorithmic techniques such as thread creation, synchronization using locks, and data aggregation were used to ensure efficiency and correctness. This approach simulated real-world concurrent systems while maintaining safe access to shared resources
