@@ -80,3 +80,152 @@ if __name__ == "__main__":
     run_multithreading()
 
 # MULTIPROCESSING CODE
+from multiprocessing import Process, current_process, Manager
+import time
+
+
+def get_courses_and_grades():
+    courses = {}
+
+    print("\nEnter your courses and grades.")
+    print("Format: CourseName Grade   (Example: Math 1.75)")
+    print("Grade must be between 1.0 and 5.0")
+    print("Type DONE when finished.\n")
+
+    while True:
+
+        entry = input("Enter course and grade: ").strip()
+
+        # Stop input
+        if entry.upper() == "DONE":
+            break
+
+        parts = entry.split()
+
+        # Validation: Must have exactly 2 parts
+        if len(parts) != 2:
+            print("Invalid format. Use: Course Grade")
+            continue
+
+        course, grade_str = parts
+
+        # Validation: Course name
+        if not course.isalpha():
+            print("Course name must contain letters only.")
+            continue
+
+        # Convert grade to float
+        try:
+            grade = float(grade_str)
+        except ValueError:
+            print("Grade must be a decimal number (example: 2.25).")
+            continue
+
+        # Validation: Range
+        if grade < 1.0 or grade > 5.0:
+            print("Grade must be between 1.0 and 5.0.")
+            continue
+
+        # Prevent duplicates
+        if course in courses:
+            print("Course already entered.")
+            continue
+
+        courses[course] = grade
+        print("Saved.")
+
+    # Check if at least one course exists
+    if not courses:
+        print("\nNo courses entered. Program will exit.")
+        exit()
+
+    return courses
+
+
+def compute_course(course, grade, results, order_list):
+    """
+    Handles one course in one process
+    """
+
+    name = current_process().name
+
+    print(f"[{name}] Processing {course}: {grade}")
+
+    # Simulate small workload
+    time.sleep(0.2)
+
+    results[course] = grade
+    order_list.append(course)
+
+
+def show_summary(start, end, results, order_list):
+    """
+    Displays execution info and GWA
+    """
+
+    total = end - start
+
+    print("\n========== SUMMARY ==========")
+
+    print(f"Execution Time: {total:.4f} seconds\n")
+
+    print("Order of Course Processing:")
+    for i, course in enumerate(order_list, 1):
+        print(f"{i}. {course}")
+
+    print("\nCourse Results:")
+    total_score = 0.0
+
+    for course, grade in results.items():
+        print(f"{course}: {grade:.2f}")
+        total_score += grade
+
+    gwa = total_score / len(results)
+
+    print(f"\nFinal GWA: {gwa:.2f}")
+
+    print("=============================")
+
+
+if __name__ == "__main__":
+
+    manager = Manager()
+
+    results = manager.dict()
+    order_list = manager.list()
+
+
+    # Get course input
+    courses = get_courses_and_grades()
+
+
+    processes = []
+
+    start_time = time.time()
+
+
+    # Create one process per course
+    for i, (course, grade) in enumerate(courses.items(), 1):
+
+        p = Process(
+            target=compute_course,
+            args=(course, grade, results, order_list),
+            name=f"Course-{i}"
+        )
+
+        processes.append(p)
+        p.start()
+
+
+    # Wait for completion
+    for p in processes:
+        p.join()
+
+
+    end_time = time.time()
+
+
+    show_summary(start_time, end_time, results, order_list)
+
+
+
