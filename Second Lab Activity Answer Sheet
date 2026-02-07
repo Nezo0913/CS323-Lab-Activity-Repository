@@ -12,6 +12,10 @@ In the multiprocessing code, each task runs in a separate process, and each proc
 
 3. Can Python handle true parallelism using threads? Why or why not?
 
+No, Standard python (CPyhon) cannot achieve true parallelism with threads for CPU bound work, However threading is effective for I/O-bound operations, where threads can run concurrently while waiting for external events. 
+
+In our code, concurrency is achieved because time.sleep() releases GIL, but threads are not executing CPU instructions in parallel, True parallelism in Python requires multiprocessing.
+
 
 4. What happens if you input a large number of grades (e.g., 1000)? Which method is faster and why?
 
