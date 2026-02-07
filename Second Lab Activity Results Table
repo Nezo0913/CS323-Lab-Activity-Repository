@@ -1,1 +1,41 @@
+Method         | Execution Order                       | GWA  | Execution Time
 
+
+Multithreading | GWA of Course Subjects (2 subjects):  | 1.75 |  23.68s
+               | with time.sleep.(0.7)
+               | Techno - 2.0
+               | Social Issues - 1.5
+               |
+               | GWA of Course Subjects (3 subjects):  | 1.57 |  47.05s
+               | with time.sleep.(0.7)
+               | Techno - 2.0
+               | Social Issues - 1.5
+               | Parallel 1.2
+               |
+               | GWA of Course Subjects (5 subjects):  | 1.79 |  84.70s
+               | with time.sleep.(0.7)
+               | Techno - 2.0
+               | Social Issues - 1.5
+               | Parallel - 1.2
+               | Info Security - 1.75
+               | Research Method - 2.5
+               |
+               | GWA of Course Subjects (8 subjects):  | 1.68 |  142.88s
+               | with time.sleep.(0.7)
+               | Techno - 2.0
+               | Social Issues - 1.5
+               | Parallel - 1.2
+               | Info Security - 1.75
+               | Research Method - 2.5
+               | Machine - 2.0
+               | Software - 1.0
+               | PICPE - 1.5
+
+
+Multiprocessing
+
+RESUlTS DISCUSSION:
+
+Multithreading -
+
+Multiprocessing -

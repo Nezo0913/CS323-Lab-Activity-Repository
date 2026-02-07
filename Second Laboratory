@@ -1,1 +1,82 @@
+# MULTITHREADING CODE
+import threading
+import time
 
+print_lock = threading.Lock()
+grades_collected = []   # shared storage for valid grades
+
+def process_grade(subject_name, grade):
+    time.sleep(1)  # simulate processing time
+    
+    try:
+        grade_val = float(grade)
+        with print_lock:
+            print(f"[Thread - {subject_name}] Processing complete ")
+            print(f">>> Grade for {subject_name}: {grade_val}\n")
+            grades_collected.append(grade_val)
+    except ValueError:
+        with print_lock:
+            print(f"[Thread - {subject_name}] Error: '{grade}' is not a valid number.\n")
+
+def show_status():
+    messages = [
+        "Generating Threads.......",
+        "Processing.......",
+        "Fetching results......."
+    ]
+    for msg in messages:
+        print(f"\n{msg}\n")
+        time.sleep(0.7)
+
+def calculate_gwa():
+    if not grades_collected:
+        print("No valid grades found. GWA cannot be calculated.")
+        return
+    
+    gwa = sum(grades_collected) / len(grades_collected)
+    print("--- GWA SUMMARY ---")
+    print(f"General Weighted Average (GWA): {gwa:.2f}")
+
+def run_multithreading():
+    start_time = time.time()
+
+    print("\n--- Multithreading Grading System ---")
+    print("Course Format: Math, Science, History")
+    print("Grade Format: Numeric values only\n")
+
+    subjects_input = input("Enter Course Subjects: ")
+    subjects = [s.strip() for s in subjects_input.split(',') if s.strip()]
+
+    if not subjects:
+        print("No subjects entered. Force Exit.")
+        return
+
+    grades = []
+    for sub in subjects:
+        g = input(f"Enter grade for {sub}: ")
+        grades.append((sub, g))
+
+    threads = []
+
+    show_status()
+
+    for sub_name, grade_val in grades:
+        t = threading.Thread(target=process_grade, args=(sub_name, grade_val))
+        threads.append(t)
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    calculate_gwa()
+
+    end_time = time.time() 
+    total_time = end_time - start_time
+
+    print("\nProgram Run Successfully.")
+    print(f"Total Execution Time: {total_time:.2f} seconds")
+
+if __name__ == "__main__":
+    run_multithreading()
+
+# MULTIPROCESSING CODE
