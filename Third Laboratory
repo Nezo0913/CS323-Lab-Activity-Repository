@@ -1,3 +1,316 @@
-# Task Parallelism
+#WITH GUI
 
-# Data Parallelism
+import tkinter as tk
+from tkinter import ttk, messagebox
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+import threading
+import os
+import uuid
+from dataclasses import dataclass
+from typing import List
+
+
+# DATA CLASSES
+
+
+@dataclass
+class Employee:
+    name: str
+    salary: float
+    id: str = None
+    
+    def __post_init__(self):
+        if not self.id:
+            self.id = str(uuid.uuid4())[:8]
+
+
+@dataclass
+class PayrollResult:
+    employee: Employee
+    sss: float
+    philhealth: float
+    pagibig: float
+    tax: float
+    total_deduction: float
+    net_salary: float
+    processor: str
+
+
+
+# CALCULATIONS
+
+
+def compute_sss(salary): return salary * 0.045
+def compute_philhealth(salary): return salary * 0.025
+def compute_pagibig(salary): return salary * 0.02
+def compute_tax(salary): return salary * 0.10
+
+def calculate_employee(emp):
+    sss = compute_sss(emp.salary)
+    phil = compute_philhealth(emp.salary)
+    pag = compute_pagibig(emp.salary)
+    tax = compute_tax(emp.salary)
+    total = sss + phil + pag + tax
+    net = emp.salary - total
+    return PayrollResult(emp, sss, phil, pag, tax, total, net, f"Process-{os.getpid()}")
+
+
+
+# GLOBAL VARIABLES
+
+employees = []
+current_result = None
+results_text = None
+tree = None
+name_entry = None
+salary_entry = None
+status_var = None
+root = None
+
+
+
+# FUNCTIONS
+
+
+def add_employee():
+    global employees, tree, name_entry, salary_entry, status_var
+    
+    name = name_entry.get().strip()
+    salary_str = salary_entry.get().strip()
+    
+    if not name or not salary_str:
+        messagebox.showerror("Error", "Please enter both name and salary")
+        return
+    
+    try:
+        salary = float(salary_str)
+        if salary <= 0:
+            messagebox.showerror("Error", "Salary must be positive")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Invalid salary format")
+        return
+    
+    emp = Employee(name=name, salary=salary)
+    employees.append(emp)
+    
+    tree.insert('', tk.END, values=(emp.name, f"₱{emp.salary:,.2f}", emp.id))
+    
+    name_entry.delete(0, tk.END)
+    salary_entry.delete(0, tk.END)
+    
+    status_var.set(f"Added: {name}")
+
+
+def display_task_result(emp, results, total, net):
+    global results_text, status_var
+    
+    results_text.delete(1.0, tk.END)
+    results_text.insert(tk.END, "TASK PARALLELISM RESULT\n")
+    results_text.insert(tk.END, f"Employee: {emp.name}\n")
+    results_text.insert(tk.END, f"ID: {emp.id}\n\n")
+    results_text.insert(tk.END, f"Gross Salary: ₱{emp.salary:,.2f}\n")
+    results_text.insert(tk.END, f"SSS: ₱{results['SSS']:,.2f}\n")
+    results_text.insert(tk.END, f"PhilHealth: ₱{results['PhilHealth']:,.2f}\n")
+    results_text.insert(tk.END, f"Pag-IBIG: ₱{results['Pag-IBIG']:,.2f}\n")
+    results_text.insert(tk.END, f"Tax: ₱{results['Tax']:,.2f}\n")
+    results_text.insert(tk.END, f"Total Deduction: ₱{total:,.2f}\n")
+    results_text.insert(tk.END, f"Net Salary: ₱{net:,.2f}\n")
+    
+    status_var.set(f"Task parallelism completed for {emp.name}")
+
+
+def run_task_parallelism():
+    global employees, tree, results_text, root, status_var
+    
+    if not employees:
+        messagebox.showwarning("Warning", "No employees to process")
+        return
+    
+    selection = tree.selection()
+    if not selection:
+        messagebox.showwarning("Warning", "Please select an employee")
+        return
+    
+    item = tree.item(selection[0])
+    emp_name = item['values'][0]
+    emp = next((e for e in employees if e.name == emp_name), None)
+    
+    if not emp:
+        return
+    
+    results_text.delete(1.0, tk.END)
+    results_text.insert(tk.END, f"Processing {emp.name}...\n\n")
+    root.update()
+    
+    def process():
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = {
+                executor.submit(compute_sss, emp.salary): "SSS",
+                executor.submit(compute_philhealth, emp.salary): "PhilHealth",
+                executor.submit(compute_pagibig, emp.salary): "Pag-IBIG",
+                executor.submit(compute_tax, emp.salary): "Tax"
+            }
+            
+            results = {}
+            for future in futures:
+                name = futures[future]
+                results[name] = future.result()
+        
+        total = sum(results.values())
+        net = emp.salary - total
+        
+        root.after(0, lambda: display_task_result(emp, results, total, net))
+    
+    threading.Thread(target=process, daemon=True).start()
+
+
+def display_batch_results(results):
+    global results_text, status_var, current_result
+    
+    results_text.delete(1.0, tk.END)
+    results_text.insert(tk.END, "BATCH PROCESSING RESULTS\n")
+    
+    total_gross = 0
+    total_net = 0
+    
+    for i, r in enumerate(results, 1):
+        results_text.insert(tk.END, f"{i}. {r.employee.name}\n")
+        results_text.insert(tk.END, f"   Gross: ₱{r.employee.salary:,.2f}\n")
+        results_text.insert(tk.END, f"   Net:   ₱{r.net_salary:,.2f}\n")
+        results_text.insert(tk.END, f"   Processor: {r.processor}\n\n")
+        
+        total_gross += r.employee.salary
+        total_net += r.net_salary
+    
+    results_text.insert(tk.END, "SUMMARY\n")
+    results_text.insert(tk.END, f"Total Employees: {len(results)}\n")
+    results_text.insert(tk.END, f"Total Gross: ₱{total_gross:,.2f}\n")
+    results_text.insert(tk.END, f"Total Net:   ₱{total_net:,.2f}\n")
+    results_text.insert(tk.END, f"Total Deductions: ₱{total_gross - total_net:,.2f}\n")
+    
+    status_var.set(f"Batch processing completed for {len(results)} employees")
+    current_result = results
+
+
+def run_data_parallelism():
+    global employees, results_text, root, status_var
+    
+    if not employees:
+        messagebox.showwarning("Warning", "No employees to process")
+        return
+    
+    results_text.delete(1.0, tk.END)
+    results_text.insert(tk.END, f"Processing {len(employees)} employees...\n\n")
+    root.update()
+    
+    def process():
+        with ProcessPoolExecutor(max_workers=min(len(employees), os.cpu_count() or 4)) as executor:
+            results = list(executor.map(calculate_employee, employees))
+        
+        root.after(0, lambda: display_batch_results(results))
+    
+    threading.Thread(target=process, daemon=True).start()
+
+
+def clear_all():
+    global employees, current_result, tree, results_text, name_entry, salary_entry, status_var
+    
+    for item in tree.get_children():
+        tree.delete(item)
+    
+    employees.clear()
+    current_result = None
+    
+    results_text.delete(1.0, tk.END)
+    
+    name_entry.delete(0, tk.END)
+    salary_entry.delete(0, tk.END)
+    
+    status_var.set("All data cleared")
+
+
+# ==============================
+# GUI SETUP
+# ==============================
+
+def setup_ui():
+    global root, tree, name_entry, salary_entry, results_text, status_var
+    
+    root = tk.Tk()
+    root.title("Payroll Processing System")
+    root.geometry("800x600")
+    
+    main_frame = ttk.Frame(root, padding="10")
+    main_frame.pack(fill=tk.BOTH, expand=True)
+    
+    title = ttk.Label(main_frame, text="PAYROLL PROCESSING SYSTEM", 
+                     font=('Arial', 16, 'bold'))
+    title.pack(pady=10)
+    
+    # Input Section
+    input_frame = ttk.LabelFrame(main_frame, text="Employee Input", padding="10")
+    input_frame.pack(fill=tk.X, pady=5)
+    
+    ttk.Label(input_frame, text="Name:").grid(row=0, column=0, sticky=tk.W)
+    name_entry = ttk.Entry(input_frame, width=30)
+    name_entry.grid(row=0, column=1, padx=5)
+    
+    ttk.Label(input_frame, text="Salary:").grid(row=1, column=0, sticky=tk.W)
+    salary_entry = ttk.Entry(input_frame, width=30)
+    salary_entry.grid(row=1, column=1, padx=5)
+    
+    ttk.Button(input_frame, text="Add Employee", 
+              command=add_employee).grid(row=2, column=0, columnspan=2, pady=10)
+    
+    # Employee List
+    list_frame = ttk.LabelFrame(main_frame, text="Employee List", padding="10")
+    list_frame.pack(fill=tk.BOTH, expand=True, pady=5)
+    
+    columns = ('Name', 'Salary', 'ID')
+    tree = ttk.Treeview(list_frame, columns=columns, show='headings', height=5)
+    
+    tree.heading('Name', text='Name')
+    tree.heading('Salary', text='Salary')
+    tree.heading('ID', text='ID')
+    
+    tree.column('Name', width=150)
+    tree.column('Salary', width=100)
+    tree.column('ID', width=100)
+    
+    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    
+    scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=tree.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    tree.configure(yscrollcommand=scrollbar.set)
+    
+    # Buttons
+    btn_frame = ttk.Frame(main_frame)
+    btn_frame.pack(fill=tk.X, pady=10)
+    
+    ttk.Button(btn_frame, text="Task Parallelism (Single)", 
+              command=run_task_parallelism).pack(side=tk.LEFT, padx=5)
+    ttk.Button(btn_frame, text="Data Parallelism (All)", 
+              command=run_data_parallelism).pack(side=tk.LEFT, padx=5)
+    ttk.Button(btn_frame, text="Clear All", 
+              command=clear_all).pack(side=tk.LEFT, padx=5)
+    
+    # Results Area
+    results_frame = ttk.LabelFrame(main_frame, text="Results", padding="10")
+    results_frame.pack(fill=tk.BOTH, expand=True, pady=5)
+    
+    results_text = tk.Text(results_frame, height=10, width=80)
+    results_text.pack(fill=tk.BOTH, expand=True)
+    
+    # Status Bar
+    status_var = tk.StringVar()
+    status_var.set("Ready")
+    status_bar = ttk.Label(main_frame, textvariable=status_var, 
+                           relief=tk.SUNKEN, anchor=tk.W)
+    status_bar.pack(fill=tk.X, pady=5)
+
+
+if _name_ == "_main_":
+    setup_ui()
+    root.mainloop()
+
