@@ -31,6 +31,7 @@ Write to Techno/Parallel Computing
 
 Contribution in the Activty:
 - Task Parallelism Code
+n/
  Patlonag, Pailagao
 - Data Parallelism Code 
  Baring, Donos
