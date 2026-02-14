@@ -1,11 +1,11 @@
 Fist Lab Activity
-# Persistent-Python-Calculator-1.0
+Persistent-Python-Calculator-1.0
 
 Second Lab Activity
-# Exploring Multithreading and Multiprocessing in Python
+Exploring Multithreading and Multiprocessing in Python
 
 Thrid Lab Activty
-# Applying Task and Data Parallelism Using Concurrent.Futures
+Applying Task and Data Parallelism Using Concurrent.Futures
 
 - Lab Activity Q&A
 
