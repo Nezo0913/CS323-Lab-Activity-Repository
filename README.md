@@ -30,11 +30,11 @@ Data Parallelism would be applied, and which executor you would use.
 Write to Techno/Parallel Computing
 
 Contribution in the Activty:
-Task Parallelism Code
-- Patlonag, Pailagao
-Data Parallelism Code 
-- Baring, Donos
-Q&A 
-- Patlonag, Pailagao, Baring, Donos
+- Task Parallelism Code
+Patlonag, Pailagao
+- Data Parallelism Code 
+Baring, Donos
+- Q&A 
+Patlonag, Pailagao, Baring, Donos
 
 
