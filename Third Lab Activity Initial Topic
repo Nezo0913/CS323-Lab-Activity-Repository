@@ -1,0 +1,16 @@
+Video Streaming Platforms (e.g., Netflix)
+Why speed matters:
+Millions of users stream simultaneously; buffering must be minimal.
+
+Data Parallelism:
+
+Video files are chunked and distributed across servers.
+Encoding happens in parallel for different segments.
+
+Task Parallelism:
+
+Authentication service
+Recommendation engine
+Video transcoding
+Content delivery
+Each service runs independently.
