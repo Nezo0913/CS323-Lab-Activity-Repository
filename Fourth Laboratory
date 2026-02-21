@@ -1,1 +1,87 @@
+Implementation 
+Sequential Version:
+
+import time
+NUM_GARMENTS = 20
+def measure():
+    time.sleep(0.01)
+def cut():
+    time.sleep(0.01)
+def sew():
+    time.sleep(0.05)  # bottleneck (longest stage)
+def assemble():
+    time.sleep(0.01)
+def sequential():
+    start = time.time()
+    for _ in range(NUM_GARMENTS):
+        measure()
+        cut()
+        sew()
+        assemble()
+    end = time.time()
+    return end - start
+
+
+Parallel Version:
+
+import time
+from concurrent.futures import ThreadPoolExecutor
+from threading import Semaphore, Lock
+NUM_GARMENTS = 20
+MAX_MACHINES = 4 # number of sewing machines
+machine_semaphore = Semaphore(MAX_MACHINES)
+storage_lock = Lock()
+completed = 0
+
+def measure_and_cut():
+time.sleep(0.01)
+time.sleep(0.01)
+
+def sew_parallel(_):
+global completed
+
+with machine_semaphore: # MachineLock
+time.sleep(0.05) # sewing bottleneck
+
+time.sleep(0.01) # assembly
+
+with storage_lock: # StorageSync
+completed += 1
+
+def parallel():
+start = time.time()
+
+# Sequential preprocessing
+for _ in range(NUM_GARMENTS):
+measure_and_cut()
+
+# Parallel sewing stage
+with ThreadPoolExecutor(max_workers=MAX_MACHINES) as executor:
+executor.map(sew_parallel, range(NUM_GARMENTS))
+
+end = time.time()
+return end - start
+
+
+
+
+Benchmarking :
+if __name__ == "__main__":
+
+print("Running Sequential Version...")
+seq_time = sequential_process()
+print(f"Sequential Execution Time: {seq_time:.4f} seconds\n")
+
+print("Running Parallel Version...")
+par_time = parallel_process()
+print(f"Parallel Execution Time: {par_time:.4f} seconds\n")
+
+speedup = seq_time / par_time
+
+print("---------- BENCHMARK RESULT ----------")
+print(f"Total Garments: {NUM_GARMENTS}")
+print(f"Sewing Machines (Workers): {MAX_MACHINES}")
+print(f"Sequential Time: {seq_time:.4f} seconds")
+print(f"Parallel Time: {par_time:.4f} seconds")
+print(f"Speedup: {speedup:.2f}x")
 
