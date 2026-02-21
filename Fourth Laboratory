@@ -85,3 +85,71 @@ print(f"Sequential Time: {seq_time:.4f} seconds")
 print(f"Parallel Time: {par_time:.4f} seconds")
 print(f"Speedup: {speedup:.2f}x")
 
+
+import time
+
+# -------------------------------
+# Stage Functions
+# -------------------------------
+
+def measuring(item_id: int):
+    print(f"Item {item_id}: Measuring...")
+    time.sleep(2.0)
+
+def pattern_cutting(item_id: int):
+    print(f"Item {item_id}: Pattern & Cutting...")
+    time.sleep(3.0)
+
+# Bottleneck stage
+def sewing(item_id: int):
+    print(f"Item {item_id}: Sewing started...")
+    time.sleep(5.0)  
+    print(f"Item {item_id}: Sewing finished.")
+
+def finishing(item_id: int):
+    print(f"Item {item_id}: Finishing...")
+    time.sleep(2.0)
+
+def storage(item_id: int):
+    print(f"Item {item_id}: Placed in storage.")
+    time.sleep(1.0)
+
+# -------------------------------
+# Sequential Workflow
+# -------------------------------
+
+def sequential_workflow(num_items: int):
+    start = time.time()
+    results = []
+
+    # Start item numbering at 1
+    for i in range(1, num_items + 1):
+        print(f"\n--- Processing Item {i} ---")
+        measuring(i)
+        pattern_cutting(i)
+        sewing(i)          # Critical bottleneck
+        finishing(i)
+        storage(i)
+        results.append(f"Item {i} completed")
+
+    end = time.time()
+    total_time = end - start
+    return results, total_time
+
+
+# -------------------------------
+# Run Sequential Workflow
+# -------------------------------
+if __name__ == "__main__":
+    num_items = 3  # Number of items to process in the workflow (can be adjusted)
+    print("\n=== Sequential Workflow Execution ===")
+    results, seq_time = sequential_workflow(num_items)
+
+    print("\nResults:")
+    for r in results:
+        print(r)
+
+    print(f"\nTotal Sequential Time: {seq_time:.2f} seconds")
+
+
+
