@@ -27,11 +27,10 @@ def sequential_linear_search(data, target):
 
 # Worker for Parallel Search
 def worker(sub_data, target, q, offset):
-    for i in range(len(sub_data)):
-        if sub_data[i] == target:
-            q.put(i + offset)  # Global index
-            return
-    q.put(-1) 
+    for i, v in enumerate(sub_data):
+        if v == target:
+            return q.put(i + offset)
+    q.put(-1)
 
 def parallel_linear_search(data, target, num_processes=4):
     q = Queue()
