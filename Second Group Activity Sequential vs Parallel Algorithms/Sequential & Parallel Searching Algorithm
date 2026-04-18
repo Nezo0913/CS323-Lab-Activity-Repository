@@ -1,5 +1,6 @@
 import random
 import time
+from multiprocessing import Process, Queue
 
 # Dataset Sizes per instructions
 SMALL = 1000
@@ -13,6 +14,7 @@ def generate_data(size, special_case=None):
     elif special_case == "reverse":
         data.sort(reverse=True)
     return data
+
 def sequential_linear_search(data, target):
     """
     Step-by-step search through the list.
@@ -22,20 +24,74 @@ def sequential_linear_search(data, target):
         if data[i] == target:
             return i  # Found it!
     return -1  # Not found
+
+# Worker for Parallel Search
+def worker(sub_data, target, q, offset):
+    for i in range(len(sub_data)):
+        if sub_data[i] == target:
+            q.put(i + offset)  # Global index
+            return
+    q.put(-1) 
+
+def parallel_linear_search(data, target, num_processes=4):
+    q = Queue()
+    processes = []
+
+    chunk_size = len(data) // num_processes
+
+    for i in range(num_processes):
+        start = i * chunk_size
+        end = (i + 1) * chunk_size if i != num_processes - 1 else len(data)
+
+        sub_data = data[start:end]
+
+        p = Process(target=worker, args=(sub_data, target, q, start))
+        processes.append(p)
+        p.start()
+
+    results = []
+    for _ in processes:
+        results.append(q.get())
+
+    for p in processes:
+        p.join()
+
+    # Get valid result (smallest index if multiple found)
+    valid_results = [r for r in results if r != -1]
+    return min(valid_results) if valid_results else -1
+
+
 def run_tests():
-    # Testing the Medium Dataset as an example
-    dataset_size = MEDIUM
-    print(f"Generating {dataset_size} elements...")
-    data = generate_data(dataset_size)
-    target = data[-1]  # Look for the last item (worst case)
+   for size in [SMALL, MEDIUM, LARGE]:
+        print(f"Dataset size: {size}")
 
-    print("Starting Sequential Search...")
-    start_time = time.time()
-    result = sequential_linear_search(data, target)
-    end_time = time.time()
+        data = generate_data(size)
+        target = data[-1]  # Worst case
 
-    print(f"Target found at index: {result}")
-    print(f"Time taken: {end_time - start_time:.6f} seconds")
+# Sequential Test
+        start = time.time()
+        seq_result = sequential_linear_search(data, target)
+        end = time.time()
+        seq_time = end - start
+
+        print(f"Sequential Result: {seq_result}")
+        print(f"Sequential Time: {seq_time:.6f} seconds")
+
+        # Parallel Test
+        start = time.time()
+        par_result = parallel_linear_search(data, target)
+        end = time.time()
+        par_time = end - start
+
+        print(f"Parallel Result: {par_result}")
+        print(f"Parallel Time: {par_time:.6f} seconds")
+
+
+      # Comparison
+        if par_time < seq_time:
+            print("Parallel was faster")
+        else:
+            print("Sequential was faster")
 
 if __name__ == "__main__":
     run_tests()
