@@ -13,3 +13,12 @@ def generate_data(size, special_case=None):
     elif special_case == "reverse":
         data.sort(reverse=True)
     return data
+def sequential_linear_search(data, target):
+    """
+    Step-by-step search through the list.
+    Returns the index if found, else -1.
+    """
+    for i in range(len(data)):
+        if data[i] == target:
+            return i  # Found it!
+    return -1  # Not found
