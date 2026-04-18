@@ -1,7 +1,4 @@
 
-<img width="240" height="210" alt="1221" src="https://github.com/user-attachments/assets/889b5678-9800-45ca-ba20-78b8a2f2acb9" />
-
-
 Fist Lab Activity
 Persistent-Python-Calculator-1.0
 
