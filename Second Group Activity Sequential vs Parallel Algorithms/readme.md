@@ -20,4 +20,5 @@ Overall, this activity helped me see that choosing between sequential and parall
 Joshua Ganas - Implementing both a sequential and parallel linear search revealed an important lesson more complexity does not always mean better performance. The key takeaway is that parallelism is a tool, not a default upgrade. It solves the right problem at the right scale. 
 
 
-![Demo](asset/S3quential_vs_P4rallel.gif.gif)
+![Demo](asset/S3quential_vs_P4rallel.gif)
+
