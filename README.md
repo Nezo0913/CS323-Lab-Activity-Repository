@@ -1,3 +1,4 @@
+
 Fist Lab Activity
 Persistent-Python-Calculator-1.0
 
@@ -55,13 +56,6 @@ Applying Task and Data Parallelism Using Concurrent.Futures
 
     In a real-world payroll system, Task Parallelism would be used for I/O-bound tasks like retrieving employee data, fetching tax information, and generating reports, using a ThreadPoolExecutor to handle multiple tasks simultaneously. Data Parallelism would be applied when computing salaries, taxes, and deductions for thousands of employees, using a ProcessPoolExecutor to distribute CPU-bound calculations across multiple cores for true parallel execution.
 
-Contribution in the Activty:
-- Task Parallelism Code
-n/
- Patlonag, Pailagao
-- Data Parallelism Code 
- Baring, Donos
-- Q&A 
- Patlonag, Pailagao, Baring, Donos
+
 
 
