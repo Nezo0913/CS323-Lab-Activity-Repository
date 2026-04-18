@@ -1,15 +1,15 @@
-# Fist Lab Activity
+Fist Lab Activity
 Persistent-Python-Calculator-1.0
 
-# Second Lab Activity
+Second Lab Activity
 Exploring Multithreading and Multiprocessing in Python
 
-# Thrid Lab Activty
+Thrid Lab Activty
 Applying Task and Data Parallelism Using Concurrent.Futures
 
 - Lab Activity Q&A
 
-## 1. Differentiate Task and Data Parallelism. Identify which part of the lab demonstrates each and justify the workload division.
+1. Differentiate Task and Data Parallelism. Identify which part of the lab demonstrates each and justify the workload division.
 
     In this laboratory activity, we explored two types of parallel computing: task parallelism and data parallelism. Both aim to improve performance by running operations simultaneously, but they differ in how the workload is divided.
 
@@ -17,7 +17,7 @@ Applying Task and Data Parallelism Using Concurrent.Futures
 
     In contrast, data parallelism focuses on dividing the data and applying the same operation to each part simultaneously. The second program demonstrates this using ProcessPoolExecutor. Instead of splitting deduction types, the program distributes employees across multiple CPU cores. Each process runs the same compute_employee_payroll() function but on different employees. Here, the workload is divided by data, with each core handling a subset of employees.
 
-## 2. Explain how concurrent.futures managed execution,including submit(), map(), and Future objects. Discuss the purpose of with when creating an Executor.
+2. Explain how concurrent.futures managed execution,including submit(), map(), and Future objects. Discuss the purpose of with when creating an Executor.
 
     In this lab, the concurrent.futures module is what handles the parallel execution in both programs. It gives us tools like ThreadPoolExecutor, ProcessPoolExecutor, submit(), map(), and Future objects to make concurrency easier to manage.
 
@@ -29,7 +29,7 @@ Applying Task and Data Parallelism Using Concurrent.Futures
 
     Overall, concurrent.futures makes parallel programming more organized and easier to control.
 
-## 3. Analyze ThreadPoolExecutor execution in relation to the GIL and CPU cores. Did true parallelism occur?
+3. Analyze ThreadPoolExecutor execution in relation to the GIL and CPU cores. Did true parallelism occur?
 
     In the task parallelism code, we used ThreadPoolExecutor, which runs on threads. However, in CPython, threads are limited by the Global Interpreter Lock (GIL), which allows only one thread to execute Python bytecode at a time.
 
@@ -37,13 +37,13 @@ Applying Task and Data Parallelism Using Concurrent.Futures
 
     Therefore, true parallelism did not occur with ThreadPoolExecutor in this case. Real parallel execution happens in the ProcessPoolExecutor version, where separate processes use separate GILs and can fully utilize multiple CPU cores.
 
-## 4. Explain why ProcessPoolExecutor enables true parallelism, including memory space separation and GIL behavior.
+4. Explain why ProcessPoolExecutor enables true parallelism, including memory space separation and GIL behavior.
 
     ProcessPoolExecutor enables true parallelism because it creates multiple independent processes instead of threads. Each process runs its own Python interpreter with a separate memory space and its own Global Interpreter Lock (GIL).
 
     Since the GIL only restricts threads within the same process, using multiple processes bypasses this limitation. As a result, different CPU cores can execute tasks simultaneously, making ProcessPoolExecutor ideal for CPU-bound operations such as mathematical computations and data processing.
 
-## 5. Evaluate scalability if the system increases from 5 to 10,000 employees. Which approach scales better and why?
+5. Evaluate scalability if the system increases from 5 to 10,000 employees. Which approach scales better and why?
 
     If the system increases from 5 to 10,000 employees, Data Parallelism using ProcessPoolExecutor scales better for CPU-intensive tasks.
 
@@ -51,7 +51,7 @@ Applying Task and Data Parallelism Using Concurrent.Futures
 
     However, for I/O-bound operations (such as fetching employee data from databases or APIs), a thread-based approach may still scale efficiently because threads can overlap waiting time.
 
-## 6. Provide a real-world payroll system example. Indicate where Task Parallelism and Data Parallelism would be applied, and which executor you would use.
+6. Provide a real-world payroll system example. Indicate where Task Parallelism and Data Parallelism would be applied, and which executor you would use.
 
     In a real-world payroll system, Task Parallelism would be used for I/O-bound tasks like retrieving employee data, fetching tax information, and generating reports, using a ThreadPoolExecutor to handle multiple tasks simultaneously. Data Parallelism would be applied when computing salaries, taxes, and deductions for thousands of employees, using a ProcessPoolExecutor to distribute CPU-bound calculations across multiple cores for true parallel execution.
 
