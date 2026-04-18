@@ -16,4 +16,9 @@ This makes it clear that parallel processing is not always better than sequentia
 
 Overall, this activity helped me see that choosing between sequential and parallel algorithms depends on the size and difficulty of the problem. Parallelism works best for big, complex tasks, while sequential approaches are often the smarter choice for simpler ones.
 
-Joshua Ganas - 
+Joshua Ganas - Implementing both a sequential and parallel linear search revealed an important lesson more complexity does not always mean better performance. The key takeaway is that parallelism is a tool, not a default upgrade. It solves the right problem at the right scale. 
+
+
+<img width="640" height="360" alt="S3quential_vs_Parallel" src="https://github.com/user-attachments/assets/aaa45191-0627-4f64-868c-27d9893a8c2a" />
+
+
