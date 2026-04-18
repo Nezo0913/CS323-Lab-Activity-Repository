@@ -3,7 +3,7 @@ Sequential vs Parallel Algorithms - Individual Reflections
 Ralph Laurenz Baring -
 
 
-Franilyn Pailagao - 
+Franilyn Y. Pailagao -  in this activity, the Sequential searching algorithm using a linear search approach. the implementation followed a strict step by step order, checking each element against the target from index 0 to N-1 . During testing, i observed a clear linear relationship between the dataset size and execution time as the data scaled from 1,000 to 1,000,000 elements, the search time increased proportionally . A key insight from my part of the task was the impact of overhead. While parallel execution is designed for speed, my sequential search was highly efficient for the small dataset because it didn't incur the cost of process creation or inter-process communication. However, for the large dataset, the limitations of a single-core execution became obvious as the search took significantly longer than the parallel version managed by my groupmates. This experience highlighted that while sequential algorithms are easier to debug and have lower complexity, they lack the scalability required for modern, high volume data processing.
 
 
 Dane Alexa C. Patlonag -
