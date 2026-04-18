@@ -1,1 +1,15 @@
+import random
+import time
 
+# Dataset Sizes per instructions
+SMALL = 1000
+MEDIUM = 100000
+LARGE = 1000000
+
+def generate_data(size, special_case=None):
+    data = [random.randint(1, 1000000) for _ in range(size)]
+    if special_case == "sorted":
+        data.sort()
+    elif special_case == "reverse":
+        data.sort(reverse=True)
+    return data
