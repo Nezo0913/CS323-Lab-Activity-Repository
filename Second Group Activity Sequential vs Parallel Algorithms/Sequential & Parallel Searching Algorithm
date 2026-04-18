@@ -22,3 +22,20 @@ def sequential_linear_search(data, target):
         if data[i] == target:
             return i  # Found it!
     return -1  # Not found
+def run_tests():
+    # Testing the Medium Dataset as an example
+    dataset_size = MEDIUM
+    print(f"Generating {dataset_size} elements...")
+    data = generate_data(dataset_size)
+    target = data[-1]  # Look for the last item (worst case)
+
+    print("Starting Sequential Search...")
+    start_time = time.time()
+    result = sequential_linear_search(data, target)
+    end_time = time.time()
+
+    print(f"Target found at index: {result}")
+    print(f"Time taken: {end_time - start_time:.6f} seconds")
+
+if __name__ == "__main__":
+    run_tests()
