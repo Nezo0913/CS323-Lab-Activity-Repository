@@ -1,16 +1,21 @@
 import random
 import time
+from multiprocessing import Pool, cpu_count
 
-def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
+def generate_dataset(size):
+    data = [random.randint(1, 1000000) for _ in range(size)]
+    sorted_data = sorted(data) 
+    return data, sorted_data
 
-    mid = len(arr) // 2
-    left_half = merge_sort(arr[:mid])
-    right_half = merge_sort(arr[mid:])
+SMALL = 1_000
+MEDIUM = 100_000
+LARGE = 1_000_000
 
-    return merge(left_half, right_half)
-
+datasets = {
+    "small": generate_dataset(SMALL),
+    "medium": generate_dataset(MEDIUM),
+    "large": generate_dataset(LARGE)
+}
 
 def merge(left, right):
     sorted_list = []
@@ -29,3 +34,56 @@ def merge(left, right):
     sorted_list.extend(right[right_index:])
 
     return sorted_list
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left_half = merge_sort(arr[:mid])
+    right_half = merge_sort(arr[mid:])
+
+    return merge(left_half, right_half)
+
+def parallel_merge_sort(data):
+    num_processes = 4 
+
+    chunk_size = len(data) // num_processes
+    chunks = [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+
+    with Pool(processes=num_processes) as pool:
+        sorted_chunks = pool.map(merge_sort, chunks)
+
+    while len(sorted_chunks) > 1:
+        new_chunks = []
+
+        for i in range(0, len(sorted_chunks), 2):
+            if i + 1 < len(sorted_chunks):
+                merged = merge(sorted_chunks[i], sorted_chunks[i + 1])
+                new_chunks.append(merged)
+            else:
+                new_chunks.append(sorted_chunks[i])
+
+        sorted_chunks = new_chunks
+
+    return sorted_chunks[0]
+
+def test_sorting(data, label):
+    print(f"\nTesting {label} dataset ({len(data)} elements)")
+
+    start = time.time()
+    seq_sorted = merge_sort(data)
+    end = time.time()
+    print(f"Sequential Merge Sort: {end - start:.4f} seconds")
+
+    start = time.time()
+    par_sorted = parallel_merge_sort(data)
+    end = time.time()
+    print(f"Parallel Merge Sort:   {end - start:.4f} seconds")
+
+    print("Correct:", seq_sorted == par_sorted)
+
+if __name__ == "__main__":
+    for name, (random_data, sorted_data) in datasets.items():
+        test_sorting(random_data, f"{name} (random)")
+        test_sorting(sorted_data, f"{name} (already sorted)")
