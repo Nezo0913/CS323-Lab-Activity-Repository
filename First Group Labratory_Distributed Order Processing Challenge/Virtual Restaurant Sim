@@ -1,0 +1,69 @@
+from mpi4py import MPI
+import time
+import random
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+
+
+# MASTER PROCESS
+if rank == 0:
+    print(f"[MASTER] Running with {size} processes\n")
+
+    # Generate orders (no shared memory needed)
+    orders = [
+        {"id": i, "item": random.choice(["Rib Steak", "Wine", "Pasta", "Mutton Chop", "Szechuan Beef Tripe"])}
+        for i in range(1, 7)
+    ]
+
+    print("[MASTER] Generated Orders:")
+    for o in orders:
+        print(o)
+
+    print("\n[MASTER] Distributing orders...\n")
+
+    # Send orders to workers (round-robin)
+    num_workers = size - 1
+    for i, order in enumerate(orders):
+        worker = (i % num_workers) + 1
+        comm.send(order, dest=worker)
+
+    # Send stop signal
+    for w in range(1, size):
+        comm.send(None, dest=w)
+
+    # Collect results from workers
+    completed_orders = []
+
+    for _ in range(len(orders)):
+        result = comm.recv(source=MPI.ANY_SOURCE)
+        completed_orders.append(result)
+
+    print("\n[MASTER] Completed Orders:")
+    for r in completed_orders:
+        print(r)
+
+# WORKERS
+else:
+    while True:
+        order = comm.recv(source=0)
+
+        if order is None:
+            break
+
+        print(f"[Worker {rank}] Processing {order}")
+
+        # Simulate processing delay
+        time.sleep(random.uniform(1, 3))
+
+        result = {
+            "order_id": order["id"],
+            "item": order["item"],
+            "processed_by": rank
+        }
+
+        # Send result back to master
+        comm.send(result, dest=0)
+        print(f"[Worker {rank}] Finished Order {order['id']}")
