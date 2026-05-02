@@ -24,25 +24,26 @@ if rank == 0:
 
     print("\n[MASTER] Distributing orders...\n")
 
-    # Send orders to workers (round-robin)
+    # DISTRIBUTE TASKS
     num_workers = size - 1
     for i, order in enumerate(orders):
         worker = (i % num_workers) + 1
         comm.send(order, dest=worker)
 
-    # Send stop signal
+    # TERMINATION SIGNAL
     for w in range(1, size):
         comm.send(None, dest=w)
 
-    # Collect results from workers
-    completed_orders = []
-
-    for _ in range(len(orders)):
+    # COLLECT RESULTS
+    for _ in range(num_orders):
         result = comm.recv(source=MPI.ANY_SOURCE)
-        completed_orders.append(result)
 
-    print("\n[MASTER] Completed Orders:")
-    for r in completed_orders:
+        with lock:
+            shared_orders.append(result)
+
+    # FINAL OUTPUT
+    print("\n[MASTER] Completed Orders (Shared Memory):")
+    for r in shared_orders:
         print(r)
 
 # WORKERS
