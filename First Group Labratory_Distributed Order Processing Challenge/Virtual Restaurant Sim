@@ -72,4 +72,4 @@ else:
         # Send result back to master
         comm.send(result, dest=0)
         print(f"[Worker {rank}] Finished Order {order['id']}")
-     #3 
+     #3
