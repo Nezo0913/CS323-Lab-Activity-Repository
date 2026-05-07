@@ -1,4 +1,5 @@
 from mpi4py import MPI
+from multiprocessing import Lock
 import time
 import random
 
@@ -6,19 +7,34 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
+# Shared memory (master only usage conceptually)
+shared_orders = []
+lock = Lock()
 
-
-# MASTER PROCESS
 if rank == 0:
     print(f"[MASTER] Running with {size} processes\n")
 
-    # Generate orders (no shared memory needed)
-    orders = [
-        {"id": i, "item": random.choice(["Rib Steak", "Wine", "Pasta", "Mutton Chop", "Szechuan Beef Tripe"])}
-        for i in range(1, 7)
-    ]
+    # INPUT VALIDATION
+    while True:
+        try:
+            num_orders = int(input("Enter number of orders (8 max): "))
+            if 1 <= num_orders <= 8:
+                break
+            else:
+                print("Please enter a number between 1 and 8.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
-    print("[MASTER] Generated Orders:")
+    orders = []
+    for i in range(num_orders):
+        while True:
+            item = input(f"Order {i+1} name: ").strip()
+            if item:
+                break
+            print("Item name cannot be empty.")
+        orders.append({"id": i + 1, "item": item})
+
+    print("\n[MASTER] Generated Orders:")
     for o in orders:
         print(o)
 
