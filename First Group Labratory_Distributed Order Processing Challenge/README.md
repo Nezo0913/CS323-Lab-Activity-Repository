@@ -1,6 +1,15 @@
 **Reflection Questions**
 
 1. How did you distribute orders among worker processes?
+Orders were distributed using MPI’s comm.send() from the master process. The master assigns each order to a worker using a simple round-robin approach:
+
+The worker is chosen using:
+
+worker = (i % num_workers) + 1
+
+Here, i is the order index and num_workers is the number of worker processes. The modulo operation cycles through the workers, while +1 ensures the master (rank 0) is skipped.
+This method evenly spreads orders across all workers (e.g., worker 1 → worker 2 → worker 3 → repeat), preventing overload on a single process and improving overall efficiency.
+
 2. What happens if there are more orders than workers?
 3. How did processing delays affect the order completion?
 4. How did you implement shared memory, and where was it initialized?
