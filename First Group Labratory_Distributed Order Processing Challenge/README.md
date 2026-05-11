@@ -1,3 +1,5 @@
+![Demo](asset/pdc_mpiexec-ezgif.com-optimize.gif)
+
 **Reflection Questions**
 
 1. How did you distribute orders among worker processes?
