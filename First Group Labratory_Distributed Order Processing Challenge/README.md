@@ -1,5 +1,4 @@
-![Demo]
-(asset/pdc_mpiexec-ezgif.com-optimize.gif)
+![Demo](asset/pdc_mpiexec-ezgif.com-optimize.gif)
 
 **Reflection Questions**
 
